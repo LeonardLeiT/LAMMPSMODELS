@@ -1,0 +1,43 @@
+# test simulations with IPL potential
+
+units            lj 
+boundary         p p p 
+atom_style       atomic 
+
+#lattice          bcc 2.50
+#region           box block 0 1 0 1 0 1 
+#create_box       2 box 
+#create_atoms     2 box basis 1 1 basis 2 1
+
+read_data two_init.data
+
+timestep         0.002
+
+#---------interaction-------------------
+mass  * 1.0
+pair_style       lj/IPL  3.0
+pair_coeff       1 1 1.0 1.0 1.0 36 3.0
+pair_coeff       1 2 1.0 1.2 1.0 36 3.6
+pair_coeff       2 2 1.0 1.4 1.0 36 4.2
+#---------interaction-------------------
+
+neighbor         0.5 bin 
+neigh_modify     every 1 delay 0 check yes 
+
+thermo           1
+thermo_style     custom step temp pe etotal press vol 
+
+group move id 2 
+
+variable n loop 1000
+label loop
+variable d equal $n*0.00001
+
+displace_atoms move move $d $d $d units box 
+compute $n all pe/atom
+dump 1 all custom 1 dump.n$n.atom id type x y z fx fy fz c_$n
+run 1
+#write_dump all custom dump.n$n.atom id type x y z fx fy fz
+undump 1
+next n 
+jump SELF loop

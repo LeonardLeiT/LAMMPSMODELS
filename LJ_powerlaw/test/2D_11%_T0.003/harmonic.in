@@ -1,0 +1,129 @@
+
+#simulation of harmonic interactions in 2D
+
+#----setup parameters--------
+variable      n   loop  1
+label         loop
+variable      b   equal $n
+
+variable      infile  index  harmonic.in
+variable      rho     equal  1.125
+variable      T       index  0
+variable      relaxt  index  0
+
+log           log.T$T.n$b.dat
+variable      seednum equal  round(random(1,100000000,12345))
+
+#-------initialize the model---------
+units        lj
+boundary     p p p 
+atom_style   atomic
+dimension    2
+
+lattice      sq ${rho}
+region       box  block 0 60 0 60 -0.25 0.25
+create_box   25 box 
+create_atoms 1 box
+
+set atom 145*288 type 2
+set atom 289*432 type 3
+set atom 433*576 type 4
+set atom 577*720 type 5
+set atom 721*864 type 6
+set atom 865*1008 type 7
+set atom 1009*1152 type 8
+set atom 1153*1296 type 9
+set atom 1297*1440 type 10
+set atom 1441*1584 type 11
+set atom 1585*1728 type 12
+set atom 1729*1872 type 13
+set atom 1873*2016 type 14
+set atom 2017*2160 type 15
+set atom 2161*2304 type 16
+set atom 2305*2448 type 17
+set atom 2449*2592 type 18
+set atom 2593*2736 type 19
+set atom 2737*2880 type 20
+set atom 2881*3024 type 21
+set atom 3025*3168 type 22
+set atom 3169*3312 type 23
+set atom 3313*3456 type 24
+set atom 3457*3600 type 25
+
+#-------interactions-------
+mass   *   1.0
+pair_style  lj/powerlaw 1.0
+
+pair_coeff  1 1 1.0 0.799475 2.0 0.799475
+pair_coeff  2 2 1.0 0.805193 2.0 0.805193
+pair_coeff  3 3 1.0 0.852912 2.0 0.852912
+pair_coeff  4 4 1.0 0.868381 2.0 0.868381
+pair_coeff  5 5 1.0 0.913775 2.0 0.913775
+pair_coeff  6 6 1.0 0.934543 2.0 0.934543
+pair_coeff  7 7 1.0 0.938025 2.0 0.938025
+pair_coeff  8 8 1.0 0.939506 2.0 0.939506
+pair_coeff  9 9 1.0 0.963070 2.0 0.963070
+pair_coeff  10 10 1.0 1.000059 2.0 1.000059
+pair_coeff  11 11 1.0 1.001377 2.0 1.001377
+pair_coeff  12 12 1.0 1.001933 2.0 1.001933
+pair_coeff  13 13 1.0 1.008592 2.0 1.008592
+pair_coeff  14 14 1.0 1.019384 2.0 1.019384
+pair_coeff  15 15 1.0 1.023387 2.0 1.023387
+pair_coeff  16 16 1.0 1.034184 2.0 1.034184
+pair_coeff  17 17 1.0 1.035693 2.0 1.035693
+pair_coeff  18 18 1.0 1.061705 2.0 1.061705
+pair_coeff  19 19 1.0 1.074576 2.0 1.074576
+pair_coeff  20 20 1.0 1.090462 2.0 1.090462
+pair_coeff  21 21 1.0 1.109973 2.0 1.109973
+pair_coeff  22 22 1.0 1.116879 2.0 1.116879
+pair_coeff  23 23 1.0 1.163217 2.0 1.163217
+pair_coeff  24 24 1.0 1.206579 2.0 1.206579
+pair_coeff  25 25 1.0 1.272378 2.0 1.272378
+
+pair_modify mix arithmetic
+#--------interaction over-----------
+
+#----run------
+timestep    0.002
+variable    relaxstep  equal  100*${relaxt}/dt
+variable    dumpstep   equal  ${relaxstep}/200
+
+neighbor     0.3 bin 
+neigh_modify every 1 delay 0 check yes 
+thermo       1000
+thermo_style custom step temp press vol pe ke enthalpy density
+
+variable  Thigh  equal  1.0
+velocity  all  create  ${Thigh} ${seednum} dist gaussian units box
+velocity  all  zero    linear
+
+fix  2dtype  all enforce2d
+
+fix   1  all nvt temp ${Thigh} ${Thigh} 0.2
+run   500000
+unfix 1
+
+write_dump all atom initial.atom
+
+fix   1  all nvt temp $T $T 0.2
+run   ${relaxstep}
+unfix 1 
+
+write_restart  restart.T$T.n$b
+write_dump  all atom dump.restart.T$T.n$b.atom
+
+#----production----
+reset_timestep 0
+variable  logout  equal  logfreq2(10,30,10)
+fix   1  all nvt  temp $T $T 0.2
+dump  1  all atom ${dumpstep} dump.log.T$T.n$b.atom
+dump_modify 1 every v_logout first yes
+dump  2  all atom ${dumpstep} dump.T$T.n$b.atom
+run   ${relaxstep}
+unfix  1
+undump 1
+undump 2
+
+clear 
+next n
+jump ${infile}

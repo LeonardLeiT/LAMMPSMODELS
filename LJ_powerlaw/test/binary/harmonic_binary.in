@@ -1,0 +1,78 @@
+#simulation of harmonic interactions in 2D
+
+#----setup parameters--------
+variable      n   loop  1
+label         loop
+variable      b   equal $n
+
+variable      infile  index  harmonic.in
+variable      rho     equal  0.783
+variable      T       index  0.002
+variable      relaxt  index  100
+
+log           log.T$T.n$b.dat
+variable      seednum equal  round(random(1,100000000,12345))
+
+#-------initialize the model---------
+units        lj
+boundary     p p p 
+atom_style   atomic
+dimension    2
+
+lattice      sq2 ${rho}
+region       box  block 0 50 0 50 -0.25 0.25
+create_box   2 box 
+create_atoms 1 box basis 1 1 basis 2 2
+
+#-------interactions-------
+mass   *   1.0
+pair_style  lj/powerlaw 1.0
+pair_coeff  1 1 1.0 1.0 2.0 1.0
+pair_coeff  2 2 1.0 1.4 2.0 1.4
+pair_coeff  1 2 1.0 1.2 2.0 1.2
+#--------interaction over-----------
+
+#----run------
+timestep    0.002
+variable    relaxstep  equal  100*${relaxt}/dt
+variable    dumpstep   equal  ${relaxstep}/200
+
+neighbor     0.3 bin 
+neigh_modify every 1 delay 0 check yes 
+thermo       1000
+thermo_style custom step temp press vol pe ke enthalpy density
+
+variable  Thigh  equal  1.0
+velocity  all  create  ${Thigh} ${seednum} dist gaussian units box
+velocity  all  zero    linear
+
+fix  2dtype  all enforce2d
+
+fix   1  all nvt temp ${Thigh} ${Thigh} 0.2
+run   500000
+unfix 1
+
+write_dump all atom initial.atom
+
+fix   1  all nvt temp $T $T 0.2
+run   ${relaxstep}
+unfix 1 
+
+write_restart  restart.T$T.n$b
+write_dump  all atom dump.restart.T$T.n$b.atom
+
+#----production----
+reset_timestep 0
+variable  logout  equal  logfreq2(10,30,10)
+fix   1  all nvt  temp $T $T 0.2
+dump  1  all atom ${dumpstep} dump.log.T$T.n$b.atom
+dump_modify 1 every v_logout first yes
+dump  2  all atom ${dumpstep} dump.T$T.n$b.atom
+run   ${relaxstep}
+unfix  1
+undump 1
+undump 2
+
+clear 
+next n
+jump ${infile}
