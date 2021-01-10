@@ -256,6 +256,11 @@ double PairLJIPL::init_one(int i, int j)
   ljfactor[j][i] = ljfactor[i][j];
   Ecut[j][i] = Ecut[i][j];
   Fcut[j][i] = Fcut[i][j];
+
+  epsilon[j][i] = epsilon[i][j];
+  sigma[j][i] = sigma[i][j];
+  A[j][i] = A[i][j];
+  powern[j][i] = powern[i][j];
   cut[j][i]  = cut[i][j];
   
   return cut[i][j];
