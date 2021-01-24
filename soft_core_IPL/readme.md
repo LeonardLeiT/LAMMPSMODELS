@@ -48,3 +48,9 @@ Benchmarking the potential energy and force between the analytical function and 
 ![pair12](./twoatoms/compare_force_12.png)
 
 ![pair22](./twoatoms/compare_force_22.png)
+
+There is a weak dependence of the force and energy on the cutoff distance, as long as cutoff is a little larger than where force $F(r)$ decays to 0, see below for some examples:
+
+![sigma1](./potential_cutoff_sigma1.00.png)
+
+![sigma1.4](potential_cutoff_sigma1.40.png)
