@@ -10,23 +10,14 @@ SSLAB
 
 
 
-This module provide LJ type Dzugutov potential for MD simulations,
-the form of the potential is :
+This module provide LJ type Dzugutov potential for MD simulations. This potential is to model a single-component glass-former which favors local icosaheral ordering.
+The form of the potential is :
 
-$$
-V = V_1 + V_2
-$$
-
-$$
-V_1 = A(r^{-m} - B) \exp(\frac{c}{r-a}) \qquad (r \lt a)
-$$
-
-$$
-V_2 = B \exp(\frac{d}{r - b}) \qquad (r \lt b)
-$$
+![formula](./formula.png)
 
 The parameters have the following values:
 
+![parameters](./parameters.png)
 
 
 
