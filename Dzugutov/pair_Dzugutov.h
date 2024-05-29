@@ -42,16 +42,9 @@ class PairDZUGUTOV : public Pair {
   double single(int, int, int, int, double, double, double, double &);
   void *extract(const char *, int &);
 
-  //void compute_inner();
-  //void compute_middle();
-  //void compute_outer(int, int);
-
  protected:
   double cut_global;
   double **cut;
-  double **epsilon,**sigma,**A,**powern;
-  double **ljfactor,**Ecut,**Fcut;
-  //double *cut_respa;
 
   virtual void allocate();
 };

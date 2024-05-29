@@ -53,7 +53,6 @@ PairDZUGUTOV::~PairDZUGUTOV()
   if (allocated) {
     memory->destroy(setflag);
     memory->destroy(cutsq);
-
     memory->destroy(cut);
   }
 }
@@ -64,9 +63,22 @@ void PairDZUGUTOV::compute(int eflag, int vflag)
 {
   int i,j,ii,jj,inum,jnum,itype,jtype;
   double xtmp,ytmp,ztmp,delx,dely,delz,evdwl,fpair;
-  double rsq,forcelj,factor_lj,rinv,exppart;
+  double rsq,forcelj,factor_lj;
   int *ilist,*jlist,*numneigh,**firstneigh;
+  double m, A, c, a, B, d, b, r, V1, dV1, V2, dV2;
 
+  m = 16;
+  A = 5.82;
+  c = 1.1;
+  a = 1.87;
+  B = 1.28;
+  d = 0.27;
+  b = 1.94;
+  b2 = pow(b, 2);
+  V1 = 0;
+  V2 = 0;
+  dV1 = 0;
+  dV2 = 0;
   evdwl = 0.0;
   ev_init(eflag,vflag);
 
@@ -104,13 +116,19 @@ void PairDZUGUTOV::compute(int eflag, int vflag)
       rsq = delx*delx + dely*dely + delz*delz;
       jtype = type[j];
 
-      if (rsq < cutsq[itype][jtype]) {
-        rinv = 1.0/sqrt(rsq);
-        exppart = pow(sigma[itype][jtype]*rinv, powern[itype][jtype]);
+      if (rsq < b2) {
+        r = sqrt(rsq);
+        if (r<a){
+          prefactor = A * exp(c/(r-a));
+          V1 = prefactor * (pow(r, -m) - B);
+          dV1 = prefactor * (-m * pow(r, -m-1)) + V1*(-c/pow(r-a, 2));
+        }
         
-        forcelj = ljfactor[itype][jtype] * rinv * exppart;
-        forcelj -= Fcut[itype][jtype];
-        fpair = factor_lj*forcelj*rinv;
+        V2 = B * exp(d/(r-b));
+        dV2 = V2 * (-d/pow(r-b, 2));
+
+        forcelj = -(dV1 + dV2);
+        fpair = factor_lj*forcelj/r;
 
         f[i][0] += delx*fpair;
         f[i][1] += dely*fpair;
@@ -122,9 +140,7 @@ void PairDZUGUTOV::compute(int eflag, int vflag)
         }
 
         if (eflag) {
-          evdwl = A[itype][jtype]*epsilon[itype][jtype]*exppart;
-          evdwl -= Ecut[itype][jtype];
-          evdwl += (1.0/rinv-cut[itype][jtype])*Fcut[itype][jtype];
+          evdwl = V1+V2;
           evdwl *= factor_lj;
         }
 
@@ -152,15 +168,7 @@ void PairDZUGUTOV::allocate()
       setflag[i][j] = 0;
 
   memory->create(cutsq,n+1,n+1,"pair:cutsq");
-
   memory->create(cut,n+1,n+1,"pair:cut");
-  memory->create(epsilon,n+1,n+1,"pair:epsilon");
-  memory->create(sigma,n+1,n+1,"pair:sigma");
-  memory->create(A,n+1,n+1,"pair:A");
-  memory->create(powern,n+1,n+1,"pair:powern");
-  memory->create(ljfactor,n+1,n+1,"pair:ljfactor");
-  memory->create(Fcut,n+1,n+1,"pair:Fcut");
-  memory->create(Ecut,n+1,n+1,"pair:Ecut");
 }
 
 /* ----------------------------------------------------------------------
@@ -185,12 +193,12 @@ void PairDZUGUTOV::settings(int narg, char **arg)
 
 /* ----------------------------------------------------------------------
    set coeffs for one or more type pairs
-   coeffcients: epsilon sigma A powern r_cut
+   coeffcients: no external coefficient is required, all included in compute()
 ------------------------------------------------------------------------- */
 
 void PairDZUGUTOV::coeff(int narg, char **arg)
 {
-  if (narg < 6 || narg > 7)
+  if (narg < 2 || narg > 3)
     error->all(FLERR,"Incorrect args for pair coefficients");
   if (!allocated) allocate();
 
@@ -198,21 +206,12 @@ void PairDZUGUTOV::coeff(int narg, char **arg)
   force->bounds(FLERR,arg[0],atom->ntypes,ilo,ihi);
   force->bounds(FLERR,arg[1],atom->ntypes,jlo,jhi);
 
-  double epsilon_one = force->numeric(FLERR,arg[2]);
-  double sigma_one = force->numeric(FLERR,arg[3]);
-  double A_one = force->numeric(FLERR,arg[4]);
-  double powern_one = force->numeric(FLERR,arg[5]);
-
   double cut_one = cut_global;
-  if (narg == 7) cut_one = force->numeric(FLERR,arg[6]);
+  if (narg == 3) cut_one = force->numeric(FLERR,arg[2]);
 
   int count = 0;
   for (int i = ilo; i <= ihi; i++) {
     for (int j = MAX(jlo,i); j <= jhi; j++) {
-      epsilon[i][j] = epsilon_one;
-      sigma[i][j] = sigma_one;
-      A[i][j] = A_one;
-      powern[i][j] = powern_one;
       cut[i][j] = cut_one;
       setflag[i][j] = 1;
       count++;
@@ -229,29 +228,9 @@ void PairDZUGUTOV::coeff(int narg, char **arg)
 double PairDZUGUTOV::init_one(int i, int j)
 {
   if (setflag[i][j] == 0) {
-    epsilon[i][j] = mix_energy(epsilon[i][i],epsilon[j][j],
-                               sigma[i][i],sigma[j][j]);
-    sigma[i][j] = mix_distance(sigma[i][i],sigma[j][j]);
-    A[i][j] = A[i][i]; //use parameters for i-i pair for i-j pair
-    powern[i][j] = powern[i][i];
     cut[i][j] = mix_distance(cut[i][i],cut[j][j]);
   }
 
-  ljfactor[i][j] = A[i][j] * epsilon[i][j] * powern[i][j];
-
-  //energy and force at the cutoff
-  double ratio = sigma[i][j] / cut[i][j];
-  Ecut[i][j] = A[i][j] * epsilon[i][j] * pow(ratio, powern[i][j]);
-  Fcut[i][j] = ljfactor[i][j]/cut[i][j]* pow(ratio, powern[i][j]);
-
-  ljfactor[j][i] = ljfactor[i][j];
-  Ecut[j][i] = Ecut[i][j];
-  Fcut[j][i] = Fcut[i][j];
-
-  epsilon[j][i] = epsilon[i][j];
-  sigma[j][i] = sigma[i][j];
-  A[j][i] = A[i][j];
-  powern[j][i] = powern[i][j];
   cut[j][i]  = cut[i][j];
   
   return cut[i][j];
@@ -270,10 +249,6 @@ void PairDZUGUTOV::write_restart(FILE *fp)
     for (j = i; j <= atom->ntypes; j++) {
       fwrite(&setflag[i][j],sizeof(int),1,fp);
       if (setflag[i][j]) {
-        fwrite(&epsilon[i][j],sizeof(double),1,fp);
-        fwrite(&sigma[i][j],sizeof(double),1,fp);
-        fwrite(&A[i][j],sizeof(double),1,fp);
-        fwrite(&powern[i][j],sizeof(double),1,fp);
         fwrite(&cut[i][j],sizeof(double),1,fp);
       }
     }
@@ -296,16 +271,8 @@ void PairDZUGUTOV::read_restart(FILE *fp)
       MPI_Bcast(&setflag[i][j],1,MPI_INT,0,world);
       if (setflag[i][j]) {
         if (me == 0) {
-          utils::sfread(FLERR,&epsilon[i][j],sizeof(double),1,fp,NULL,error);
-          utils::sfread(FLERR,&sigma[i][j],sizeof(double),1,fp,NULL,error);
-          utils::sfread(FLERR,&A[i][j],sizeof(double),1,fp,NULL,error);
-          utils::sfread(FLERR,&powern[i][j],sizeof(double),1,fp,NULL,error);
           utils::sfread(FLERR,&cut[i][j],sizeof(double),1,fp,NULL,error);
         }
-        MPI_Bcast(&epsilon[i][j],1,MPI_DOUBLE,0,world);
-        MPI_Bcast(&sigma[i][j],1,MPI_DOUBLE,0,world);
-        MPI_Bcast(&A[i][j],1,MPI_DOUBLE,0,world);
-        MPI_Bcast(&powern[i][j],1,MPI_DOUBLE,0,world);
         MPI_Bcast(&cut[i][j],1,MPI_DOUBLE,0,world);
       }
     }
@@ -343,7 +310,7 @@ void PairDZUGUTOV::read_restart_settings(FILE *fp)
 void PairDZUGUTOV::write_data(FILE *fp)
 {
   for (int i = 1; i <= atom->ntypes; i++)
-    fprintf(fp,"%d %g %g %g %g\n",i,epsilon[i][i],sigma[i][i],A[i][i],powern[i][i]);
+    fprintf(fp,"%d\n",i);
 }
 
 /* ----------------------------------------------------------------------
@@ -354,7 +321,7 @@ void PairDZUGUTOV::write_data_all(FILE *fp)
 {
   for (int i = 1; i <= atom->ntypes; i++)
     for (int j = i; j <= atom->ntypes; j++)
-      fprintf(fp,"%d %d %g %g %g %g %g\n",i,j,epsilon[i][j],sigma[i][j],A[i][j],powern[i][j],cut[i][j]);
+      fprintf(fp,"%d %d %g\n",i,j,cut[i][j]);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -363,17 +330,37 @@ double PairDZUGUTOV::single(int /*i*/, int /*j*/, int itype, int jtype, double r
                          double /*factor_coul*/, double factor_lj,
                          double &fforce)
 {
-  double rinv,exppart,forcelj,philj;
+  double m, A, c, a, B, d, b, r, V1, dV1, V2, dV2;
 
-  rinv = 1.0/sqrt(rsq);
-  exppart = pow(sigma[itype][jtype]*rinv, powern[itype][jtype]);
+  m = 16;
+  A = 5.82;
+  c = 1.1;
+  a = 1.87;
+  B = 1.28;
+  d = 0.27;
+  b = 1.94;
+  b2 = pow(b, 2);
+  V1 = 0;
+  V2 = 0;
+  dV1 = 0;
+  dV2 = 0;
 
-  forcelj = ljfactor[itype][jtype]*rinv*exppart - Fcut[itype][jtype];
-  fforce = factor_lj*forcelj*rinv;
+  if (rsq < b2) {
+    r = sqrt(rsq);
+    if (r<a){
+      prefactor = A * exp(c/(r-a));
+      V1 = prefactor * (pow(r, -m) - B);
+      dV1 = prefactor * (-m * pow(r, -m-1)) + V1*(-c/pow(r-a, 2));
+    }
 
-  philj = A[itype][jtype]*epsilon[itype][jtype]*exppart;
-  philj -= Ecut[itype][jtype];
-  philj += (1.0/rinv-cut[itype][jtype])*Fcut[itype][jtype];
+    V2 = B * exp(d/(r-b));
+    dV2 = V2 * (-d/pow(r-b, 2));
+  }
+  
+  forcelj = -(dV1 + dV2);
+  fpair = factor_lj*forcelj/r;
+
+  philj = V1 + V2;
 
   return factor_lj*philj;
 }
@@ -383,9 +370,5 @@ double PairDZUGUTOV::single(int /*i*/, int /*j*/, int itype, int jtype, double r
 void *PairDZUGUTOV::extract(const char *str, int &dim)
 {
   dim = 2;
-  if (strcmp(str,"epsilon") == 0) return (void *) epsilon;
-  if (strcmp(str,"sigma") == 0) return (void *) sigma;
-  if (strcmp(str,"A") == 0) return (void *) A;
-  if (strcmp(str,"powern") == 0) return (void *) powern;
   return NULL;
 }
