@@ -65,7 +65,7 @@ void PairDZUGUTOV::compute(int eflag, int vflag)
   double xtmp,ytmp,ztmp,delx,dely,delz,evdwl,fpair;
   double rsq,forcelj,factor_lj;
   int *ilist,*jlist,*numneigh,**firstneigh;
-  double m, A, c, a, B, d, b, r, V1, dV1, V2, dV2;
+  double m, A, c, a, B, d, b, r, V1, dV1, V2, dV2, b2, prefactor;
 
   m = 16;
   A = 5.82;
@@ -330,7 +330,7 @@ double PairDZUGUTOV::single(int /*i*/, int /*j*/, int itype, int jtype, double r
                          double /*factor_coul*/, double factor_lj,
                          double &fforce)
 {
-  double m, A, c, a, B, d, b, r, V1, dV1, V2, dV2;
+  double m, A, c, a, B, d, b, r, V1, dV1, V2, dV2, b2, prefactor;
 
   m = 16;
   A = 5.82;
