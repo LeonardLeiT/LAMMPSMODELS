@@ -1,0 +1,4454 @@
+LAMMPS (11 Aug 2017)
+# test simulations with LJ_POWERLAW potential
+
+units            lj
+boundary         p p p
+atom_style       atomic
+
+#lattice          bcc 2.50
+#region           box block 0 1 0 1 0 1
+#create_box       2 box
+#create_atoms     2 box basis 1 1 basis 2 1
+
+read_data two_init.data
+  orthogonal box = (-2.78495 -2.78495 -2.78495) to (2.78495 2.78495 2.78495)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  2 atoms
+  reading velocities ...
+  2 velocities
+
+timestep         0.002
+
+#---------interaction-------------------
+mass  * 1.0
+pair_style       lj/powerlaw  1.0
+pair_coeff       1 1 1.0 1.0  2.0  1.0
+pair_coeff       1 2 1.0 0.95  2.0  0.95
+pair_coeff       2 2 1.0 0.90 2.0  0.90
+#---------interaction-------------------
+
+neighbor         0.5 bin
+neigh_modify     every 1 delay 0 check yes
+
+thermo           1
+thermo_style     custom step temp pe etotal press vol
+
+group move id 2
+1 atoms in group move
+
+variable n loop 100
+label loop
+variable d equal $n*0.001
+variable d equal 1*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.001 $d $d units box
+displace_atoms move move 0.001 0.001 $d units box
+displace_atoms move move 0.001 0.001 0.001 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Neighbor list info ...
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 1.5
+  ghost atom cutoff = 1.5
+  binsize = 0.75, bins = 8 8 8
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/powerlaw, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d/newton
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       0            0   0.10622964   0.10622964 0.00043776854        172.8 
+       1            0   0.10622964   0.10622964 0.00043776854        172.8 
+Loop time of 0.000697851 on 1 procs for 1 steps with 2 atoms
+
+Performance: 247617.264 tau/day, 1432.970 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  0.58
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.7684e-06 | 4.7684e-06 | 4.7684e-06 |   0.0 |  0.68
+Output  | 0.00066495 | 0.00066495 | 0.00066495 |   0.0 | 95.29
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  0.55
+Other   |            | 2.027e-05  |            |       |  2.90
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n1.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 2*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.002 $d $d units box
+displace_atoms move move 0.002 0.002 $d units box
+displace_atoms move move 0.002 0.002 0.002 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       1            0   0.10510359   0.10510359 0.00043977491        172.8 
+       2            0   0.10510359   0.10510359 0.00043977491        172.8 
+Loop time of 0.000221014 on 1 procs for 1 steps with 2 atoms
+
+Performance: 781850.843 tau/day, 4524.600 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.97
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.83
+Output  | 0.00019693 | 0.00019693 | 0.00019693 |   0.0 | 89.10
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.83
+Other   |            | 1.383e-05  |            |       |  6.26
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n2.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 3*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.003 $d $d units box
+displace_atoms move move 0.003 0.003 $d units box
+displace_atoms move move 0.003 0.003 0.003 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       2            0   0.10342577   0.10342577 0.00044269766        172.8 
+       3            0   0.10342577   0.10342577 0.00044269766        172.8 
+Loop time of 0.000217915 on 1 procs for 1 steps with 2 atoms
+
+Performance: 792971.260 tau/day, 4588.954 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.31
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.86
+Output  | 0.00019407 | 0.00019407 | 0.00019407 |   0.0 | 89.06
+Modify  | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.98
+Other   |            | 1.478e-05  |            |       |  6.78
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n3.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 4*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.004 $d $d units box
+displace_atoms move move 0.004 0.004 $d units box
+displace_atoms move move 0.004 0.004 0.004 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       3            0   0.10120967   0.10120967 0.00044643262        172.8 
+       4            0   0.10120967   0.10120967 0.00044643262        172.8 
+Loop time of 0.00027895 on 1 procs for 1 steps with 2 atoms
+
+Performance: 619466.437 tau/day, 3584.875 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 7.8678e-06 | 7.8678e-06 | 7.8678e-06 |   0.0 |  2.82
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  1.79
+Output  | 0.00024009 | 0.00024009 | 0.00024009 |   0.0 | 86.07
+Modify  | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  1.79
+Other   |            | 2.098e-05  |            |       |  7.52
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n4.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 5*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.005 $d $d units box
+displace_atoms move move 0.005 0.005 $d units box
+displace_atoms move move 0.005 0.005 0.005 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       4            0  0.098473288  0.098473288 0.0004508409        172.8 
+       5            0  0.098473288  0.098473288 0.0004508409        172.8 
+Loop time of 0.0001719 on 1 procs for 1 steps with 2 atoms
+
+Performance: 1005236.798 tau/day, 5817.343 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.66
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  1.11
+Output  | 0.00015211 | 0.00015211 | 0.00015211 |   0.0 | 88.49
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.80
+Other   |            | 1.192e-05  |            |       |  6.93
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n5.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 6*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.006 $d $d units box
+displace_atoms move move 0.006 0.006 $d units box
+displace_atoms move move 0.006 0.006 0.006 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       5            0  0.095239136  0.095239136 0.0004557489        172.8 
+       6            0  0.095239136  0.095239136 0.0004557489        172.8 
+Loop time of 0.000259161 on 1 procs for 1 steps with 2 atoms
+
+Performance: 666767.002 tau/day, 3858.605 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.56
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.47
+Output  | 0.00023413 | 0.00023413 | 0.00023413 |   0.0 | 90.34
+Modify  | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.83
+Other   |            | 1.502e-05  |            |       |  5.80
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n6.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 7*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.007 $d $d units box
+displace_atoms move move 0.007 0.007 $d units box
+displace_atoms move move 0.007 0.007 0.007 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       6            0  0.091534208  0.091534208 0.00046094827        172.8 
+       7            0  0.091534208  0.091534208 0.00046094827        172.8 
+Loop time of 0.000206947 on 1 procs for 1 steps with 2 atoms
+
+Performance: 834995.082 tau/day, 4832.147 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.50
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.50
+Output  | 0.00018096 | 0.00018096 | 0.00018096 |   0.0 | 87.44
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.96
+Other   |            | 1.574e-05  |            |       |  7.60
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n7.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 8*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.008 $d $d units box
+displace_atoms move move 0.008 0.008 $d units box
+displace_atoms move move 0.008 0.008 0.008 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       7            0  0.087390005  0.087390005 0.00046619597        172.8 
+       8            0  0.087390005  0.087390005 0.00046619597        172.8 
+Loop time of 0.000344038 on 1 procs for 1 steps with 2 atoms
+
+Performance: 502270.084 tau/day, 2906.656 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  0.90
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  0.90
+Output  | 0.000319   | 0.000319   | 0.000319   |   0.0 | 92.72
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.18
+Other   |            | 1.478e-05  |            |       |  4.30
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n8.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 9*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.009 $d $d units box
+displace_atoms move move 0.009 0.009 $d units box
+displace_atoms move move 0.009 0.009 0.009 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       8            0  0.082842526  0.082842526 0.00047121421        172.8 
+       9            0  0.082842526  0.082842526 0.00047121421        172.8 
+Loop time of 0.000270128 on 1 procs for 1 steps with 2 atoms
+
+Performance: 639696.144 tau/day, 3701.945 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  1.85
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.41
+Output  | 0.00023985 | 0.00023985 | 0.00023985 |   0.0 | 88.79
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.06
+Other   |            | 1.86e-05   |            |       |  6.88
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n9.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 10*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.01 $d $d units box
+displace_atoms move move 0.01 0.01 $d units box
+displace_atoms move move 0.01 0.01 0.01 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+       9            0  0.077932272  0.077932272 0.0004756905        172.8 
+      10            0  0.077932272  0.077932272 0.0004756905        172.8 
+Loop time of 0.000370979 on 1 procs for 1 steps with 2 atoms
+
+Performance: 465794.172 tau/day, 2695.568 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  0.84
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.09
+Output  | 0.00034595 | 0.00034595 | 0.00034595 |   0.0 | 93.25
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  0.84
+Other   |            | 1.478e-05  |            |       |  3.98
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n10.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 11*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.011 $d $d units box
+displace_atoms move move 0.011 0.011 $d units box
+displace_atoms move move 0.011 0.011 0.011 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      10            0  0.072704243  0.072704243 0.00047927761        172.8 
+      11            0  0.072704243  0.072704243 0.00047927761        172.8 
+Loop time of 0.000236988 on 1 procs for 1 steps with 2 atoms
+
+Performance: 729150.635 tau/day, 4219.622 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.21
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.61
+Output  | 0.00021195 | 0.00021195 | 0.00021195 |   0.0 | 89.44
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.71
+Other   |            | 1.431e-05  |            |       |  6.04
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n11.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 12*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.012 $d $d units box
+displace_atoms move move 0.012 0.012 $d units box
+displace_atoms move move 0.012 0.012 0.012 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      11            0  0.067207938  0.067207938 0.0004815936        172.8 
+      12            0  0.067207938  0.067207938 0.0004815936        172.8 
+Loop time of 0.000535011 on 1 procs for 1 steps with 2 atoms
+
+Performance: 322983.837 tau/day, 1869.119 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  0.76
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  0.71
+Output  | 0.00049996 | 0.00049996 | 0.00049996 |   0.0 | 93.45
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  0.58
+Other   |            | 2.408e-05  |            |       |  4.50
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n12.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 13*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.013 $d $d units box
+displace_atoms move move 0.013 0.013 $d units box
+displace_atoms move move 0.013 0.013 0.013 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      12            0  0.061497357  0.061497357 0.00048222181        172.8 
+      13            0  0.061497357  0.061497357 0.00048222181        172.8 
+Loop time of 0.000216007 on 1 procs for 1 steps with 2 atoms
+
+Performance: 799973.213 tau/day, 4629.475 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.88
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.77
+Output  | 0.00018883 | 0.00018883 | 0.00018883 |   0.0 | 87.42
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.77
+Other   |            | 1.55e-05   |            |       |  7.17
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n13.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 14*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.014 $d $d units box
+displace_atoms move move 0.014 0.014 $d units box
+displace_atoms move move 0.014 0.014 0.014 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      13            0  0.055631002  0.055631002 0.00048071083        172.8 
+      14            0  0.055631002  0.055631002 0.00048071083        172.8 
+Loop time of 0.000223875 on 1 procs for 1 steps with 2 atoms
+
+Performance: 771859.139 tau/day, 4466.777 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.81
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.9605e-06 | 5.9605e-06 | 5.9605e-06 |   0.0 |  2.66
+Output  | 0.00019503 | 0.00019503 | 0.00019503 |   0.0 | 87.11
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.81
+Other   |            | 1.478e-05  |            |       |  6.60
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n14.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 15*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.015 $d $d units box
+displace_atoms move move 0.015 0.015 $d units box
+displace_atoms move move 0.015 0.015 0.015 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      14            0  0.049671871  0.049671871 0.00047657457        172.8 
+      15            0  0.049671871  0.049671871 0.00047657457        172.8 
+Loop time of 0.000264168 on 1 procs for 1 steps with 2 atoms
+
+Performance: 654129.721 tau/day, 3785.473 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.81
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.44
+Output  | 0.00023985 | 0.00023985 | 0.00023985 |   0.0 | 90.79
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.17
+Other   |            | 1.526e-05  |            |       |  5.78
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n15.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 16*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.016 $d $d units box
+displace_atoms move move 0.016 0.016 $d units box
+displace_atoms move move 0.016 0.016 0.016 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      15            0  0.043687464  0.043687464 0.00046929219        172.8 
+      16            0  0.043687464  0.043687464 0.00046929219        172.8 
+Loop time of 0.000221968 on 1 procs for 1 steps with 2 atoms
+
+Performance: 778491.655 tau/day, 4505.160 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.83
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.7684e-06 | 4.7684e-06 | 4.7684e-06 |   0.0 |  2.15
+Output  | 0.00019288 | 0.00019288 | 0.00019288 |   0.0 | 86.90
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.72
+Other   |            | 1.645e-05  |            |       |  7.41
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n16.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 17*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.017 $d $d units box
+displace_atoms move move 0.017 0.017 $d units box
+displace_atoms move move 0.017 0.017 0.017 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      16            0  0.037749782  0.037749782 0.00045830813        172.8 
+      17            0  0.037749782  0.037749782 0.00045830813        172.8 
+Loop time of 0.000469923 on 1 procs for 1 steps with 2 atoms
+
+Performance: 367719.803 tau/day, 2128.008 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  0.61
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  0.66
+Output  | 0.00044513 | 0.00044513 | 0.00044513 |   0.0 | 94.72
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  0.86
+Other   |            | 1.478e-05  |            |       |  3.15
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n17.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 18*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.018 $d $d units box
+displace_atoms move move 0.018 0.018 $d units box
+displace_atoms move move 0.018 0.018 0.018 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      17            0  0.031935325  0.031935325 0.00044303212        172.8 
+      18            0  0.031935325  0.031935325 0.00044303212        172.8 
+Loop time of 0.000216007 on 1 procs for 1 steps with 2 atoms
+
+Performance: 799973.213 tau/day, 4629.475 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.88
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.88
+Output  | 0.00018907 | 0.00018907 | 0.00018907 |   0.0 | 87.53
+Modify  | 4.2915e-06 | 4.2915e-06 | 4.2915e-06 |   0.0 |  1.99
+Other   |            | 1.454e-05  |            |       |  6.73
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n18.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 19*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.019 $d $d units box
+displace_atoms move move 0.019 0.019 $d units box
+displace_atoms move move 0.019 0.019 0.019 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      18            0  0.026325093  0.026325093 0.00042283915        172.8 
+      19            0  0.026325093  0.026325093 0.00042283915        172.8 
+Loop time of 0.000350952 on 1 procs for 1 steps with 2 atoms
+
+Performance: 492374.817 tau/day, 2849.391 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.15
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 7.1526e-06 | 7.1526e-06 | 7.1526e-06 |   0.0 |  2.04
+Output  | 0.0003221  | 0.0003221  | 0.0003221  |   0.0 | 91.78
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  0.82
+Other   |            | 1.478e-05  |            |       |  4.21
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n19.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 20*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.02 $d $d units box
+displace_atoms move move 0.02 0.02 $d units box
+displace_atoms move move 0.02 0.02 0.02 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      19            0  0.021004584  0.021004584 0.0003970695        172.8 
+      20            0  0.021004584  0.021004584 0.0003970695        172.8 
+Loop time of 0.000213146 on 1 procs for 1 steps with 2 atoms
+
+Performance: 810711.109 tau/day, 4691.615 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.79
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.90
+Output  | 0.00018716 | 0.00018716 | 0.00018716 |   0.0 | 87.81
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.34
+Other   |            | 1.526e-05  |            |       |  7.16
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n20.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 21*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.021 $d $d units box
+displace_atoms move move 0.021 0.021 $d units box
+displace_atoms move move 0.021 0.021 0.021 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      20            0  0.016063801  0.016063801 0.00036502874        172.8 
+      21            0  0.016063801  0.016063801 0.00036502874        172.8 
+Loop time of 0.00018692 on 1 procs for 1 steps with 2 atoms
+
+Performance: 924458.841 tau/day, 5349.878 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  2.17
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.66
+Output  | 0.00016189 | 0.00016189 | 0.00016189 |   0.0 | 86.61
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  2.17
+Other   |            | 1.383e-05  |            |       |  7.40
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n21.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 22*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.022 $d $d units box
+displace_atoms move move 0.022 0.022 $d units box
+displace_atoms move move 0.022 0.022 0.022 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      21            0  0.011597242  0.011597242 0.00032598768        172.8 
+      22            0  0.011597242  0.011597242 0.00032598768        172.8 
+Loop time of 0.000191927 on 1 procs for 1 steps with 2 atoms
+
+Performance: 900342.523 tau/day, 5210.316 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.61
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  2.11
+Output  | 0.00016594 | 0.00016594 | 0.00016594 |   0.0 | 86.46
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.49
+Other   |            | 1.597e-05  |            |       |  8.32
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n22.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 23*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.023 $d $d units box
+displace_atoms move move 0.023 0.023 $d units box
+displace_atoms move move 0.023 0.023 0.023 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      22            0 0.0077039078 0.0077039078 0.00027918245        172.8 
+      23            0 0.0077039078 0.0077039078 0.00027918245        172.8 
+Loop time of 0.000222921 on 1 procs for 1 steps with 2 atoms
+
+Performance: 775161.210 tau/day, 4485.887 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.82
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.82
+Output  | 0.00019789 | 0.00019789 | 0.00019789 |   0.0 | 88.77
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.39
+Other   |            | 1.383e-05  |            |       |  6.20
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n23.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 24*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.024 $d $d units box
+displace_atoms move move 0.024 0.024 $d units box
+displace_atoms move move 0.024 0.024 0.024 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      23            0 0.0044872981 0.0044872981 0.00022381444        172.8 
+      24            0 0.0044872981 0.0044872981 0.00022381444        172.8 
+Loop time of 0.000210047 on 1 procs for 1 steps with 2 atoms
+
+Performance: 822673.929 tau/day, 4760.844 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.48
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.93
+Output  | 0.00018501 | 0.00018501 | 0.00018501 |   0.0 | 88.08
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.93
+Other   |            | 1.383e-05  |            |       |  6.58
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n24.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 25*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.025 $d $d units box
+displace_atoms move move 0.025 0.025 $d units box
+displace_atoms move move 0.025 0.025 0.025 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      24            0  0.002055413  0.002055413 0.0001590503        172.8 
+      25            0  0.002055413  0.002055413 0.0001590503        172.8 
+Loop time of 0.000215054 on 1 procs for 1 steps with 2 atoms
+
+Performance: 803520.766 tau/day, 4650.004 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.88
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.77
+Output  | 0.00018883 | 0.00018883 | 0.00018883 |   0.0 | 87.80
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.77
+Other   |            | 1.454e-05  |            |       |  6.76
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n25.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 26*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.026 $d $d units box
+displace_atoms move move 0.026 0.026 $d units box
+displace_atoms move move 0.026 0.026 0.026 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      25            0 0.00052075251 0.00052075251 8.4021981e-05        172.8 
+      26            0 0.00052075251 0.00052075251 8.4021981e-05        172.8 
+Loop time of 0.000285149 on 1 procs for 1 steps with 2 atoms
+
+Performance: 605999.775 tau/day, 3506.943 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 9.0599e-06 | 9.0599e-06 | 9.0599e-06 |   0.0 |  3.18
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.722e-06  | 5.722e-06  | 5.722e-06  |   0.0 |  2.01
+Output  | 0.00023985 | 0.00023985 | 0.00023985 |   0.0 | 84.11
+Modify  | 5.2452e-06 | 5.2452e-06 | 5.2452e-06 |   0.0 |  1.84
+Other   |            | 2.527e-05  |            |       |  8.86
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n26.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 27*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.027 $d $d units box
+displace_atoms move move 0.027 0.027 $d units box
+displace_atoms move move 0.027 0.027 0.027 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      26            0            0            0            0        172.8 
+      27            0            0            0            0        172.8 
+Loop time of 0.000198126 on 1 procs for 1 steps with 2 atoms
+
+Performance: 872172.962 tau/day, 5047.297 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.56
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.44
+Output  | 0.00017381 | 0.00017381 | 0.00017381 |   0.0 | 87.73
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.93
+Other   |            | 1.454e-05  |            |       |  7.34
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n27.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 28*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.028 $d $d units box
+displace_atoms move move 0.028 0.028 $d units box
+displace_atoms move move 0.028 0.028 0.028 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      27            0            0            0            0        172.8 
+      28            0            0            0            0        172.8 
+Loop time of 0.000244141 on 1 procs for 1 steps with 2 atoms
+
+Performance: 707788.800 tau/day, 4096.000 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.17
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.27
+Output  | 0.00021815 | 0.00021815 | 0.00021815 |   0.0 | 89.36
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.56
+Other   |            | 1.621e-05  |            |       |  6.64
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n28.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 29*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.029 $d $d units box
+displace_atoms move move 0.029 0.029 $d units box
+displace_atoms move move 0.029 0.029 0.029 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      28            0            0            0            0        172.8 
+      29            0            0            0            0        172.8 
+Loop time of 0.000167847 on 1 procs for 1 steps with 2 atoms
+
+Performance: 1029510.982 tau/day, 5957.818 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  1.28
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.70
+Output  | 0.00014687 | 0.00014687 | 0.00014687 |   0.0 | 87.50
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  2.27
+Other   |            | 1.216e-05  |            |       |  7.24
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n29.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 30*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.03 $d $d units box
+displace_atoms move move 0.03 0.03 $d units box
+displace_atoms move move 0.03 0.03 0.03 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      29            0            0            0            0        172.8 
+      30            0            0            0            0        172.8 
+Loop time of 0.000248909 on 1 procs for 1 steps with 2 atoms
+
+Performance: 694229.628 tau/day, 4017.533 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.15
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.25
+Output  | 0.00022411 | 0.00022411 | 0.00022411 |   0.0 | 90.04
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.63
+Other   |            | 1.478e-05  |            |       |  5.94
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n30.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 31*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.031 $d $d units box
+displace_atoms move move 0.031 0.031 $d units box
+displace_atoms move move 0.031 0.031 0.031 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      30            0            0            0            0        172.8 
+      31            0            0            0            0        172.8 
+Loop time of 0.000242949 on 1 procs for 1 steps with 2 atoms
+
+Performance: 711261.758 tau/day, 4116.098 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.88
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.67
+Output  | 0.00021887 | 0.00021887 | 0.00021887 |   0.0 | 90.09
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.57
+Other   |            | 1.407e-05  |            |       |  5.79
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n31.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 32*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.032 $d $d units box
+displace_atoms move move 0.032 0.032 $d units box
+displace_atoms move move 0.032 0.032 0.032 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      31            0            0            0            0        172.8 
+      32            0            0            0            0        172.8 
+Loop time of 0.000216961 on 1 procs for 1 steps with 2 atoms
+
+Performance: 796456.847 tau/day, 4609.125 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.87
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.32
+Output  | 0.00019002 | 0.00019002 | 0.00019002 |   0.0 | 87.58
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.32
+Other   |            | 1.717e-05  |            |       |  7.91
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n32.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 33*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.033 $d $d units box
+displace_atoms move move 0.033 0.033 $d units box
+displace_atoms move move 0.033 0.033 0.033 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      32            0            0            0            0        172.8 
+      33            0            0            0            0        172.8 
+Loop time of 0.000260115 on 1 procs for 1 steps with 2 atoms
+
+Performance: 664322.393 tau/day, 3844.458 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.73
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 8.1062e-06 | 8.1062e-06 | 8.1062e-06 |   0.0 |  3.12
+Output  | 0.00023198 | 0.00023198 | 0.00023198 |   0.0 | 89.18
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.10
+Other   |            | 1.526e-05  |            |       |  5.87
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n33.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 34*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.034 $d $d units box
+displace_atoms move move 0.034 0.034 $d units box
+displace_atoms move move 0.034 0.034 0.034 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      33            0            0            0            0        172.8 
+      34            0            0            0            0        172.8 
+Loop time of 0.000216007 on 1 procs for 1 steps with 2 atoms
+
+Performance: 799973.213 tau/day, 4629.475 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.88
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.88
+Output  | 0.00018811 | 0.00018811 | 0.00018811 |   0.0 | 87.09
+Modify  | 4.2915e-06 | 4.2915e-06 | 4.2915e-06 |   0.0 |  1.99
+Other   |            | 1.55e-05   |            |       |  7.17
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n34.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 35*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.035 $d $d units box
+displace_atoms move move 0.035 0.035 $d units box
+displace_atoms move move 0.035 0.035 0.035 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      34            0            0            0            0        172.8 
+      35            0            0            0            0        172.8 
+Loop time of 0.000259161 on 1 procs for 1 steps with 2 atoms
+
+Performance: 666767.002 tau/day, 3858.605 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.83
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.47
+Output  | 0.00023484 | 0.00023484 | 0.00023484 |   0.0 | 90.62
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.20
+Other   |            | 1.526e-05  |            |       |  5.89
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n35.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 36*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.036 $d $d units box
+displace_atoms move move 0.036 0.036 $d units box
+displace_atoms move move 0.036 0.036 0.036 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      35            0            0            0            0        172.8 
+      36            0            0            0            0        172.8 
+Loop time of 0.000216961 on 1 procs for 1 steps with 2 atoms
+
+Performance: 796456.847 tau/day, 4609.125 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  2.31
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.43
+Output  | 0.00019002 | 0.00019002 | 0.00019002 |   0.0 | 87.58
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.76
+Other   |            | 1.502e-05  |            |       |  6.92
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n36.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 37*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.037 $d $d units box
+displace_atoms move move 0.037 0.037 $d units box
+displace_atoms move move 0.037 0.037 0.037 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      36            0            0            0            0        172.8 
+      37            0            0            0            0        172.8 
+Loop time of 0.000417948 on 1 procs for 1 steps with 2 atoms
+
+Performance: 413448.791 tau/day, 2392.643 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 6.3896e-05 | 6.3896e-05 | 6.3896e-05 |   0.0 | 15.29
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 2.5988e-05 | 2.5988e-05 | 2.5988e-05 |   0.0 |  6.22
+Output  | 0.00030208 | 0.00030208 | 0.00030208 |   0.0 | 72.28
+Modify  | 5.2452e-06 | 5.2452e-06 | 5.2452e-06 |   0.0 |  1.25
+Other   |            | 2.074e-05  |            |       |  4.96
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n37.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 38*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.038 $d $d units box
+displace_atoms move move 0.038 0.038 $d units box
+displace_atoms move move 0.038 0.038 0.038 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      37            0            0            0            0        172.8 
+      38            0            0            0            0        172.8 
+Loop time of 0.000212908 on 1 procs for 1 steps with 2 atoms
+
+Performance: 811618.960 tau/day, 4696.869 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.46
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.46
+Output  | 0.00018787 | 0.00018787 | 0.00018787 |   0.0 | 88.24
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.90
+Other   |            | 1.478e-05  |            |       |  6.94
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n38.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 39*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.039 $d $d units box
+displace_atoms move move 0.039 0.039 $d units box
+displace_atoms move move 0.039 0.039 0.039 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      38            0            0            0            0        172.8 
+      39            0            0            0            0        172.8 
+Loop time of 0.000280857 on 1 procs for 1 steps with 2 atoms
+
+Performance: 615259.534 tau/day, 3560.530 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.44
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.10
+Output  | 0.00025487 | 0.00025487 | 0.00025487 |   0.0 | 90.75
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.44
+Other   |            | 1.478e-05  |            |       |  5.26
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n39.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 40*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.04 $d $d units box
+displace_atoms move move 0.04 0.04 $d units box
+displace_atoms move move 0.04 0.04 0.04 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      39            0            0            0            0        172.8 
+      40            0            0            0            0        172.8 
+Loop time of 0.000164986 on 1 procs for 1 steps with 2 atoms
+
+Performance: 1047363.773 tau/day, 6061.133 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.73
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.73
+Output  | 0.00014496 | 0.00014496 | 0.00014496 |   0.0 | 87.86
+Modify  | 3.3379e-06 | 3.3379e-06 | 3.3379e-06 |   0.0 |  2.02
+Other   |            | 1.097e-05  |            |       |  6.65
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n40.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 41*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.041 $d $d units box
+displace_atoms move move 0.041 0.041 $d units box
+displace_atoms move move 0.041 0.041 0.041 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      40            0            0            0            0        172.8 
+      41            0            0            0            0        172.8 
+Loop time of 0.000216961 on 1 procs for 1 steps with 2 atoms
+
+Performance: 796456.847 tau/day, 4609.125 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.87
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.87
+Output  | 0.00018907 | 0.00018907 | 0.00018907 |   0.0 | 87.14
+Modify  | 5.2452e-06 | 5.2452e-06 | 5.2452e-06 |   0.0 |  2.42
+Other   |            | 1.454e-05  |            |       |  6.70
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n41.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 42*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.042 $d $d units box
+displace_atoms move move 0.042 0.042 $d units box
+displace_atoms move move 0.042 0.042 0.042 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      41            0            0            0            0        172.8 
+      42            0            0            0            0        172.8 
+Loop time of 0.000169992 on 1 procs for 1 steps with 2 atoms
+
+Performance: 1016515.752 tau/day, 5882.614 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  1.26
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  2.24
+Output  | 0.00014997 | 0.00014997 | 0.00014997 |   0.0 | 88.22
+Modify  | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  1.12
+Other   |            | 1.216e-05  |            |       |  7.15
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n42.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 43*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.043 $d $d units box
+displace_atoms move move 0.043 0.043 $d units box
+displace_atoms move move 0.043 0.043 0.043 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      42            0            0            0            0        172.8 
+      43            0            0            0            0        172.8 
+Loop time of 0.000188112 on 1 procs for 1 steps with 2 atoms
+
+Performance: 918600.420 tau/day, 5315.975 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  1.14
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  2.15
+Output  | 0.00016403 | 0.00016403 | 0.00016403 |   0.0 | 87.20
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.52
+Other   |            | 1.502e-05  |            |       |  7.98
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n43.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 44*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.044 $d $d units box
+displace_atoms move move 0.044 0.044 $d units box
+displace_atoms move move 0.044 0.044 0.044 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      43            0            0            0            0        172.8 
+      44            0            0            0            0        172.8 
+Loop time of 0.000215054 on 1 procs for 1 steps with 2 atoms
+
+Performance: 803520.766 tau/day, 4650.004 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  1.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.9605e-06 | 5.9605e-06 | 5.9605e-06 |   0.0 |  2.77
+Output  | 0.00018811 | 0.00018811 | 0.00018811 |   0.0 | 87.47
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.88
+Other   |            | 1.478e-05  |            |       |  6.87
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n44.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 45*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.045 $d $d units box
+displace_atoms move move 0.045 0.045 $d units box
+displace_atoms move move 0.045 0.045 0.045 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      44            0            0            0            0        172.8 
+      45            0            0            0            0        172.8 
+Loop time of 0.000226021 on 1 procs for 1 steps with 2 atoms
+
+Performance: 764531.362 tau/day, 4424.371 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.37
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.9605e-06 | 5.9605e-06 | 5.9605e-06 |   0.0 |  2.64
+Output  | 0.00019598 | 0.00019598 | 0.00019598 |   0.0 | 86.71
+Modify  | 4.2915e-06 | 4.2915e-06 | 4.2915e-06 |   0.0 |  1.90
+Other   |            | 1.669e-05  |            |       |  7.38
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n45.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 46*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.046 $d $d units box
+displace_atoms move move 0.046 0.046 $d units box
+displace_atoms move move 0.046 0.046 0.046 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      45            0            0            0            0        172.8 
+      46            0            0            0            0        172.8 
+Loop time of 0.000262976 on 1 procs for 1 steps with 2 atoms
+
+Performance: 657094.951 tau/day, 3802.633 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.54
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.7684e-06 | 4.7684e-06 | 4.7684e-06 |   0.0 |  1.81
+Output  | 0.00022507 | 0.00022507 | 0.00022507 |   0.0 | 85.58
+Modify  | 7.1526e-06 | 7.1526e-06 | 7.1526e-06 |   0.0 |  2.72
+Other   |            | 2.193e-05  |            |       |  8.34
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n46.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 47*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.047 $d $d units box
+displace_atoms move move 0.047 0.047 $d units box
+displace_atoms move move 0.047 0.047 0.047 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      46            0            0            0            0        172.8 
+      47            0            0            0            0        172.8 
+Loop time of 0.000241041 on 1 procs for 1 steps with 2 atoms
+
+Performance: 716889.942 tau/day, 4148.669 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.19
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.68
+Output  | 0.00021601 | 0.00021601 | 0.00021601 |   0.0 | 89.61
+Modify  | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.79
+Other   |            | 1.621e-05  |            |       |  6.73
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n47.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 48*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.048 $d $d units box
+displace_atoms move move 0.048 0.048 $d units box
+displace_atoms move move 0.048 0.048 0.048 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      47            0            0            0            0        172.8 
+      48            0            0            0            0        172.8 
+Loop time of 0.000299931 on 1 procs for 1 steps with 2 atoms
+
+Performance: 576133.332 tau/day, 3334.105 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.27
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  1.67
+Output  | 0.00027204 | 0.00027204 | 0.00027204 |   0.0 | 90.70
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  0.95
+Other   |            | 1.621e-05  |            |       |  5.41
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n48.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 49*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.049 $d $d units box
+displace_atoms move move 0.049 0.049 $d units box
+displace_atoms move move 0.049 0.049 0.049 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      48            0            0            0            0        172.8 
+      49            0            0            0            0        172.8 
+Loop time of 0.000236034 on 1 procs for 1 steps with 2 atoms
+
+Performance: 732096.698 tau/day, 4236.671 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.21
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.62
+Output  | 0.000211   | 0.000211   | 0.000211   |   0.0 | 89.39
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.72
+Other   |            | 1.431e-05  |            |       |  6.06
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n49.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 50*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.05 $d $d units box
+displace_atoms move move 0.05 0.05 $d units box
+displace_atoms move move 0.05 0.05 0.05 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      49            0            0            0            0        172.8 
+      50            0            0            0            0        172.8 
+Loop time of 0.000274897 on 1 procs for 1 steps with 2 atoms
+
+Performance: 628599.940 tau/day, 3637.731 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.47
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.47
+Output  | 0.000247   | 0.000247   | 0.000247   |   0.0 | 89.85
+Modify  | 4.2915e-06 | 4.2915e-06 | 4.2915e-06 |   0.0 |  1.56
+Other   |            | 1.55e-05   |            |       |  5.64
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n50.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 51*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.051 $d $d units box
+displace_atoms move move 0.051 0.051 $d units box
+displace_atoms move move 0.051 0.051 0.051 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      50            0            0            0            0        172.8 
+      51            0            0            0            0        172.8 
+Loop time of 0.000264883 on 1 procs for 1 steps with 2 atoms
+
+Performance: 652363.394 tau/day, 3775.251 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.72
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.44
+Output  | 0.00024199 | 0.00024199 | 0.00024199 |   0.0 | 91.36
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.53
+Other   |            | 1.311e-05  |            |       |  4.95
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n51.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 52*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.052 $d $d units box
+displace_atoms move move 0.052 0.052 $d units box
+displace_atoms move move 0.052 0.052 0.052 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      51            0            0            0            0        172.8 
+      52            0            0            0            0        172.8 
+Loop time of 0.000281811 on 1 procs for 1 steps with 2 atoms
+
+Performance: 613177.438 tau/day, 3548.481 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.68
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  1.78
+Output  | 0.00022101 | 0.00022101 | 0.00022101 |   0.0 | 78.43
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.44
+Other   |            | 4.983e-05  |            |       | 17.68
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n52.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 53*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.053 $d $d units box
+displace_atoms move move 0.053 0.053 $d units box
+displace_atoms move move 0.053 0.053 0.053 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      52            0            0            0            0        172.8 
+      53            0            0            0            0        172.8 
+Loop time of 0.000222921 on 1 procs for 1 steps with 2 atoms
+
+Performance: 775161.210 tau/day, 4485.887 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.39
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.82
+Output  | 0.00019598 | 0.00019598 | 0.00019598 |   0.0 | 87.91
+Modify  | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.96
+Other   |            | 1.764e-05  |            |       |  7.91
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n53.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 54*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.054 $d $d units box
+displace_atoms move move 0.054 0.054 $d units box
+displace_atoms move move 0.054 0.054 0.054 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      53            0            0            0            0        172.8 
+      54            0            0            0            0        172.8 
+Loop time of 0.000230074 on 1 procs for 1 steps with 2 atoms
+
+Performance: 751062.934 tau/day, 4346.429 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.83
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.7684e-06 | 4.7684e-06 | 4.7684e-06 |   0.0 |  2.07
+Output  | 0.00020409 | 0.00020409 | 0.00020409 |   0.0 | 88.70
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.35
+Other   |            | 1.621e-05  |            |       |  7.05
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n54.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 55*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.055 $d $d units box
+displace_atoms move move 0.055 0.055 $d units box
+displace_atoms move move 0.055 0.055 0.055 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      54            0            0            0            0        172.8 
+      55            0            0            0            0        172.8 
+Loop time of 0.000223875 on 1 procs for 1 steps with 2 atoms
+
+Performance: 771859.139 tau/day, 4466.777 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.96
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  2.24
+Output  | 0.00019979 | 0.00019979 | 0.00019979 |   0.0 | 89.24
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.81
+Other   |            | 1.287e-05  |            |       |  5.75
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n55.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 56*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.056 $d $d units box
+displace_atoms move move 0.056 0.056 $d units box
+displace_atoms move move 0.056 0.056 0.056 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      55            0            0            0            0        172.8 
+      56            0            0            0            0        172.8 
+Loop time of 0.000218868 on 1 procs for 1 steps with 2 atoms
+
+Performance: 789516.047 tau/day, 4568.959 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.87
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.85
+Output  | 0.00019503 | 0.00019503 | 0.00019503 |   0.0 | 89.11
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.74
+Other   |            | 1.407e-05  |            |       |  6.43
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n56.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 57*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.057 $d $d units box
+displace_atoms move move 0.057 0.057 $d units box
+displace_atoms move move 0.057 0.057 0.057 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      56            0            0            0            0        172.8 
+      57            0            0            0            0        172.8 
+Loop time of 0.000349998 on 1 procs for 1 steps with 2 atoms
+
+Performance: 493716.438 tau/day, 2857.155 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  0.89
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 7.1526e-06 | 7.1526e-06 | 7.1526e-06 |   0.0 |  2.04
+Output  | 0.00032306 | 0.00032306 | 0.00032306 |   0.0 | 92.30
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.16
+Other   |            | 1.264e-05  |            |       |  3.61
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n57.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 58*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.058 $d $d units box
+displace_atoms move move 0.058 0.058 $d units box
+displace_atoms move move 0.058 0.058 0.058 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      57            0            0            0            0        172.8 
+      58            0            0            0            0        172.8 
+Loop time of 0.000246048 on 1 procs for 1 steps with 2 atoms
+
+Performance: 702302.065 tau/day, 4064.248 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.16
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.65
+Output  | 0.00022006 | 0.00022006 | 0.00022006 |   0.0 | 89.44
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.55
+Other   |            | 1.526e-05  |            |       |  6.20
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n58.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 59*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.059 $d $d units box
+displace_atoms move move 0.059 0.059 $d units box
+displace_atoms move move 0.059 0.059 0.059 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      58            0            0            0            0        172.8 
+      59            0            0            0            0        172.8 
+Loop time of 0.000259161 on 1 procs for 1 steps with 2 atoms
+
+Performance: 666767.002 tau/day, 3858.605 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.47
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  1.93
+Output  | 0.00023198 | 0.00023198 | 0.00023198 |   0.0 | 89.51
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.10
+Other   |            | 1.55e-05   |            |       |  5.98
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n59.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 60*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.06 $d $d units box
+displace_atoms move move 0.06 0.06 $d units box
+displace_atoms move move 0.06 0.06 0.06 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      59            0            0            0            0        172.8 
+      60            0            0            0            0        172.8 
+Loop time of 0.000201941 on 1 procs for 1 steps with 2 atoms
+
+Performance: 855697.439 tau/day, 4951.953 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.94
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.2452e-06 | 5.2452e-06 | 5.2452e-06 |   0.0 |  2.60
+Output  | 0.00017691 | 0.00017691 | 0.00017691 |   0.0 | 87.60
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.53
+Other   |            | 1.478e-05  |            |       |  7.32
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n60.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 61*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.061 $d $d units box
+displace_atoms move move 0.061 0.061 $d units box
+displace_atoms move move 0.061 0.061 0.061 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      60            0            0            0            0        172.8 
+      61            0            0            0            0        172.8 
+Loop time of 0.00022316 on 1 procs for 1 steps with 2 atoms
+
+Performance: 774333.046 tau/day, 4481.094 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.28
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.82
+Output  | 0.00019813 | 0.00019813 | 0.00019813 |   0.0 | 88.78
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.71
+Other   |            | 1.431e-05  |            |       |  6.41
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n61.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 62*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.062 $d $d units box
+displace_atoms move move 0.062 0.062 $d units box
+displace_atoms move move 0.062 0.062 0.062 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      61            0            0            0            0        172.8 
+      62            0            0            0            0        172.8 
+Loop time of 0.000236034 on 1 procs for 1 steps with 2 atoms
+
+Performance: 732096.698 tau/day, 4236.671 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.91
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.62
+Output  | 0.00020504 | 0.00020504 | 0.00020504 |   0.0 | 86.87
+Modify  | 7.8678e-06 | 7.8678e-06 | 7.8678e-06 |   0.0 |  3.33
+Other   |            | 1.717e-05  |            |       |  7.27
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n62.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 63*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.063 $d $d units box
+displace_atoms move move 0.063 0.063 $d units box
+displace_atoms move move 0.063 0.063 0.063 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      62            0            0            0            0        172.8 
+      63            0            0            0            0        172.8 
+Loop time of 0.000234842 on 1 procs for 1 steps with 2 atoms
+
+Performance: 735812.925 tau/day, 4258.177 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.32
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.73
+Output  | 0.00019288 | 0.00019288 | 0.00019288 |   0.0 | 82.13
+Modify  | 9.0599e-06 | 9.0599e-06 | 9.0599e-06 |   0.0 |  3.86
+Other   |            | 2.575e-05  |            |       | 10.96
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n63.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 64*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.064 $d $d units box
+displace_atoms move move 0.064 0.064 $d units box
+displace_atoms move move 0.064 0.064 0.064 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      63            0            0            0            0        172.8 
+      64            0            0            0            0        172.8 
+Loop time of 0.000236988 on 1 procs for 1 steps with 2 atoms
+
+Performance: 729150.635 tau/day, 4219.622 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.80
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.2452e-06 | 5.2452e-06 | 5.2452e-06 |   0.0 |  2.21
+Output  | 0.00021505 | 0.00021505 | 0.00021505 |   0.0 | 90.74
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.71
+Other   |            | 1.073e-05  |            |       |  4.53
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n64.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 65*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.065 $d $d units box
+displace_atoms move move 0.065 0.065 $d units box
+displace_atoms move move 0.065 0.065 0.065 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      64            0            0            0            0        172.8 
+      65            0            0            0            0        172.8 
+Loop time of 0.000224829 on 1 procs for 1 steps with 2 atoms
+
+Performance: 768585.081 tau/day, 4447.830 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.38
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  2.23
+Output  | 0.00019979 | 0.00019979 | 0.00019979 |   0.0 | 88.87
+Modify  | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.85
+Other   |            | 1.502e-05  |            |       |  6.68
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n65.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 66*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.066 $d $d units box
+displace_atoms move move 0.066 0.066 $d units box
+displace_atoms move move 0.066 0.066 0.066 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      65            0            0            0            0        172.8 
+      66            0            0            0            0        172.8 
+Loop time of 0.000267982 on 1 procs for 1 steps with 2 atoms
+
+Performance: 644818.266 tau/day, 3731.587 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.07
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.51
+Output  | 0.00024199 | 0.00024199 | 0.00024199 |   0.0 | 90.30
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.07
+Other   |            | 1.621e-05  |            |       |  6.05
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n66.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 67*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.067 $d $d units box
+displace_atoms move move 0.067 0.067 $d units box
+displace_atoms move move 0.067 0.067 0.067 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      66            0            0            0            0        172.8 
+      67            0            0            0            0        172.8 
+Loop time of 0.000246048 on 1 procs for 1 steps with 2 atoms
+
+Performance: 702302.065 tau/day, 4064.248 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.16
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  2.03
+Output  | 0.00021911 | 0.00021911 | 0.00021911 |   0.0 | 89.05
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.65
+Other   |            | 1.502e-05  |            |       |  6.10
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n67.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 68*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.068 $d $d units box
+displace_atoms move move 0.068 0.068 $d units box
+displace_atoms move move 0.068 0.068 0.068 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      67            0            0            0            0        172.8 
+      68            0            0            0            0        172.8 
+Loop time of 0.000217915 on 1 procs for 1 steps with 2 atoms
+
+Performance: 792971.260 tau/day, 4588.954 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.98
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  2.30
+Output  | 0.00019193 | 0.00019193 | 0.00019193 |   0.0 | 88.07
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.86
+Other   |            | 1.478e-05  |            |       |  6.78
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n68.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 69*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.069 $d $d units box
+displace_atoms move move 0.069 0.069 $d units box
+displace_atoms move move 0.069 0.069 0.069 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      68            0            0            0            0        172.8 
+      69            0            0            0            0        172.8 
+Loop time of 0.000324011 on 1 procs for 1 steps with 2 atoms
+
+Performance: 533315.475 tau/day, 3086.316 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.9101e-05 | 3.9101e-05 | 3.9101e-05 |   0.0 | 12.07
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 6.1989e-06 | 6.1989e-06 | 6.1989e-06 |   0.0 |  1.91
+Output  | 0.00023413 | 0.00023413 | 0.00023413 |   0.0 | 72.26
+Modify  | 9.0599e-06 | 9.0599e-06 | 9.0599e-06 |   0.0 |  2.80
+Other   |            | 3.552e-05  |            |       | 10.96
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n69.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 70*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.07 $d $d units box
+displace_atoms move move 0.07 0.07 $d units box
+displace_atoms move move 0.07 0.07 0.07 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      69            0            0            0            0        172.8 
+      70            0            0            0            0        172.8 
+Loop time of 0.000226974 on 1 procs for 1 steps with 2 atoms
+
+Performance: 761319.045 tau/day, 4405.782 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.37
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.79
+Output  | 0.00020099 | 0.00020099 | 0.00020099 |   0.0 | 88.55
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.79
+Other   |            | 1.478e-05  |            |       |  6.51
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n70.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 71*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.071 $d $d units box
+displace_atoms move move 0.071 0.071 $d units box
+displace_atoms move move 0.071 0.071 0.071 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      70            0            0            0            0        172.8 
+      71            0            0            0            0        172.8 
+Loop time of 0.000277996 on 1 procs for 1 steps with 2 atoms
+
+Performance: 621591.536 tau/day, 3597.173 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.11
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.9605e-06 | 5.9605e-06 | 5.9605e-06 |   0.0 |  2.14
+Output  | 0.000247   | 0.000247   | 0.000247   |   0.0 | 88.85
+Modify  | 5.9605e-06 | 5.9605e-06 | 5.9605e-06 |   0.0 |  2.14
+Other   |            | 1.597e-05  |            |       |  5.75
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n71.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 72*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.072 $d $d units box
+displace_atoms move move 0.072 0.072 $d units box
+displace_atoms move move 0.072 0.072 0.072 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      71            0            0            0            0        172.8 
+      72            0            0            0            0        172.8 
+Loop time of 0.00027895 on 1 procs for 1 steps with 2 atoms
+
+Performance: 619466.437 tau/day, 3584.875 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.77
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.45
+Output  | 0.00025487 | 0.00025487 | 0.00025487 |   0.0 | 91.37
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.45
+Other   |            | 1.383e-05  |            |       |  4.96
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n72.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 73*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.073 $d $d units box
+displace_atoms move move 0.073 0.073 $d units box
+displace_atoms move move 0.073 0.073 0.073 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      72            0            0            0            0        172.8 
+      73            0            0            0            0        172.8 
+Loop time of 0.000289917 on 1 procs for 1 steps with 2 atoms
+
+Performance: 596032.674 tau/day, 3449.263 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  0.99
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  1.73
+Output  | 0.00026298 | 0.00026298 | 0.00026298 |   0.0 | 90.71
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.40
+Other   |            | 1.502e-05  |            |       |  5.18
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n73.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 74*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.074 $d $d units box
+displace_atoms move move 0.074 0.074 $d units box
+displace_atoms move move 0.074 0.074 0.074 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      73            0            0            0            0        172.8 
+      74            0            0            0            0        172.8 
+Loop time of 0.000351906 on 1 procs for 1 steps with 2 atoms
+
+Performance: 491040.468 tau/day, 2841.669 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  0.81
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.2452e-06 | 5.2452e-06 | 5.2452e-06 |   0.0 |  1.49
+Output  | 0.000319   | 0.000319   | 0.000319   |   0.0 | 90.65
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.08
+Other   |            | 2.098e-05  |            |       |  5.96
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n74.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 75*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.075 $d $d units box
+displace_atoms move move 0.075 0.075 $d units box
+displace_atoms move move 0.075 0.075 0.075 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      74            0            0            0            0        172.8 
+      75            0            0            0            0        172.8 
+Loop time of 0.000236988 on 1 procs for 1 steps with 2 atoms
+
+Performance: 729150.635 tau/day, 4219.622 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.21
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.71
+Output  | 0.00020909 | 0.00020909 | 0.00020909 |   0.0 | 88.23
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.61
+Other   |            | 1.717e-05  |            |       |  7.24
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n75.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 76*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.076 $d $d units box
+displace_atoms move move 0.076 0.076 $d units box
+displace_atoms move move 0.076 0.076 0.076 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      75            0            0            0            0        172.8 
+      76            0            0            0            0        172.8 
+Loop time of 0.000289917 on 1 procs for 1 steps with 2 atoms
+
+Performance: 596032.674 tau/day, 3449.263 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.66
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  1.73
+Output  | 0.00022316 | 0.00022316 | 0.00022316 |   0.0 | 76.97
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.32
+Other   |            | 5.603e-05  |            |       | 19.33
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n76.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 77*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.077 $d $d units box
+displace_atoms move move 0.077 0.077 $d units box
+displace_atoms move move 0.077 0.077 0.077 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      76            0            0            0            0        172.8 
+      77            0            0            0            0        172.8 
+Loop time of 0.000305891 on 1 procs for 1 steps with 2 atoms
+
+Performance: 564907.039 tau/day, 3269.138 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.70
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.33
+Output  | 0.000278   | 0.000278   | 0.000278   |   0.0 | 90.88
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.33
+Other   |            | 1.764e-05  |            |       |  5.77
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n77.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 78*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.078 $d $d units box
+displace_atoms move move 0.078 0.078 $d units box
+displace_atoms move move 0.078 0.078 0.078 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      77            0            0            0            0        172.8 
+      78            0            0            0            0        172.8 
+Loop time of 0.000294924 on 1 procs for 1 steps with 2 atoms
+
+Performance: 585914.092 tau/day, 3390.707 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.05
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  1.70
+Output  | 0.00026488 | 0.00026488 | 0.00026488 |   0.0 | 89.81
+Modify  | 4.2915e-06 | 4.2915e-06 | 4.2915e-06 |   0.0 |  1.46
+Other   |            | 1.764e-05  |            |       |  5.98
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n78.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 79*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.079 $d $d units box
+displace_atoms move move 0.079 0.079 $d units box
+displace_atoms move move 0.079 0.079 0.079 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      78            0            0            0            0        172.8 
+      79            0            0            0            0        172.8 
+Loop time of 0.00022316 on 1 procs for 1 steps with 2 atoms
+
+Performance: 774333.046 tau/day, 4481.094 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.28
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  2.24
+Output  | 0.00019693 | 0.00019693 | 0.00019693 |   0.0 | 88.25
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.71
+Other   |            | 1.454e-05  |            |       |  6.52
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n79.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 80*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.08 $d $d units box
+displace_atoms move move 0.08 0.08 $d units box
+displace_atoms move move 0.08 0.08 0.08 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      79            0            0            0            0        172.8 
+      80            0            0            0            0        172.8 
+Loop time of 0.000227928 on 1 procs for 1 steps with 2 atoms
+
+Performance: 758133.610 tau/day, 4387.347 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.26
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.2452e-06 | 5.2452e-06 | 5.2452e-06 |   0.0 |  2.30
+Output  | 0.00020409 | 0.00020409 | 0.00020409 |   0.0 | 89.54
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.36
+Other   |            | 1.264e-05  |            |       |  5.54
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n80.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 81*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.081 $d $d units box
+displace_atoms move move 0.081 0.081 $d units box
+displace_atoms move move 0.081 0.081 0.081 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      80            0            0            0            0        172.8 
+      81            0            0            0            0        172.8 
+Loop time of 0.000216007 on 1 procs for 1 steps with 2 atoms
+
+Performance: 799973.213 tau/day, 4629.475 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.88
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.9605e-06 | 5.9605e-06 | 5.9605e-06 |   0.0 |  2.76
+Output  | 0.00019002 | 0.00019002 | 0.00019002 |   0.0 | 87.97
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.77
+Other   |            | 1.431e-05  |            |       |  6.62
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n81.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 82*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.082 $d $d units box
+displace_atoms move move 0.082 0.082 $d units box
+displace_atoms move move 0.082 0.082 0.082 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      81            0            0            0            0        172.8 
+      82            0            0            0            0        172.8 
+Loop time of 0.000222921 on 1 procs for 1 steps with 2 atoms
+
+Performance: 775161.210 tau/day, 4485.887 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.39
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.82
+Output  | 0.00019503 | 0.00019503 | 0.00019503 |   0.0 | 87.49
+Modify  | 4.2915e-06 | 4.2915e-06 | 4.2915e-06 |   0.0 |  1.93
+Other   |            | 1.645e-05  |            |       |  7.38
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n82.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 83*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.083 $d $d units box
+displace_atoms move move 0.083 0.083 $d units box
+displace_atoms move move 0.083 0.083 0.083 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      82            0            0            0            0        172.8 
+      83            0            0            0            0        172.8 
+Loop time of 0.000459909 on 1 procs for 1 steps with 2 atoms
+
+Performance: 375726.144 tau/day, 2174.341 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 7.4148e-05 | 7.4148e-05 | 7.4148e-05 |   0.0 | 16.12
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.722e-06  | 5.722e-06  | 5.722e-06  |   0.0 |  1.24
+Output  | 0.00032902 | 0.00032902 | 0.00032902 |   0.0 | 71.54
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  0.88
+Other   |            | 4.697e-05  |            |       | 10.21
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n83.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 84*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.084 $d $d units box
+displace_atoms move move 0.084 0.084 $d units box
+displace_atoms move move 0.084 0.084 0.084 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      83            0            0            0            0        172.8 
+      84            0            0            0            0        172.8 
+Loop time of 0.000214815 on 1 procs for 1 steps with 2 atoms
+
+Performance: 804412.576 tau/day, 4655.165 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.44
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  2.33
+Output  | 0.00018883 | 0.00018883 | 0.00018883 |   0.0 | 87.90
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.78
+Other   |            | 1.407e-05  |            |       |  6.55
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n84.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 85*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.085 $d $d units box
+displace_atoms move move 0.085 0.085 $d units box
+displace_atoms move move 0.085 0.085 0.085 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      84            0            0            0            0        172.8 
+      85            0            0            0            0        172.8 
+Loop time of 0.000217199 on 1 procs for 1 steps with 2 atoms
+
+Performance: 795582.581 tau/day, 4604.066 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.32
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.0068e-06 | 5.0068e-06 | 5.0068e-06 |   0.0 |  2.31
+Output  | 0.00019193 | 0.00019193 | 0.00019193 |   0.0 | 88.36
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.76
+Other   |            | 1.359e-05  |            |       |  6.26
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n85.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 86*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.086 $d $d units box
+displace_atoms move move 0.086 0.086 $d units box
+displace_atoms move move 0.086 0.086 0.086 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      85            0            0            0            0        172.8 
+      86            0            0            0            0        172.8 
+Loop time of 0.000219107 on 1 procs for 1 steps with 2 atoms
+
+Performance: 788656.944 tau/day, 4563.987 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  0.98
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.7684e-06 | 4.7684e-06 | 4.7684e-06 |   0.0 |  2.18
+Output  | 0.00019193 | 0.00019193 | 0.00019193 |   0.0 | 87.60
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.85
+Other   |            | 1.621e-05  |            |       |  7.40
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n86.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 87*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.087 $d $d units box
+displace_atoms move move 0.087 0.087 $d units box
+displace_atoms move move 0.087 0.087 0.087 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      86            0            0            0            0        172.8 
+      87            0            0            0            0        172.8 
+Loop time of 0.000226974 on 1 procs for 1 steps with 2 atoms
+
+Performance: 761319.045 tau/day, 4405.782 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.84
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.7684e-06 | 4.7684e-06 | 4.7684e-06 |   0.0 |  2.10
+Output  | 0.00020003 | 0.00020003 | 0.00020003 |   0.0 | 88.13
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.79
+Other   |            | 1.621e-05  |            |       |  7.14
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n87.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 88*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.088 $d $d units box
+displace_atoms move move 0.088 0.088 $d units box
+displace_atoms move move 0.088 0.088 0.088 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      87            0            0            0            0        172.8 
+      88            0            0            0            0        172.8 
+Loop time of 0.000449896 on 1 procs for 1 steps with 2 atoms
+
+Performance: 384088.888 tau/day, 2222.737 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  0.85
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 7.1526e-06 | 7.1526e-06 | 7.1526e-06 |   0.0 |  1.59
+Output  | 0.00041914 | 0.00041914 | 0.00041914 |   0.0 | 93.16
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  0.90
+Other   |            | 1.574e-05  |            |       |  3.50
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n88.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 89*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.089 $d $d units box
+displace_atoms move move 0.089 0.089 $d units box
+displace_atoms move move 0.089 0.089 0.089 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      88            0            0            0            0        172.8 
+      89            0            0            0            0        172.8 
+Loop time of 0.000208855 on 1 procs for 1 steps with 2 atoms
+
+Performance: 827369.556 tau/day, 4788.018 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1458e-06 | 2.1458e-06 | 2.1458e-06 |   0.0 |  1.03
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.83
+Output  | 0.00018787 | 0.00018787 | 0.00018787 |   0.0 | 89.95
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.37
+Other   |            | 1.216e-05  |            |       |  5.82
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7 ave 7 max 7 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n89.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 90*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.09 $d $d units box
+displace_atoms move move 0.09 0.09 $d units box
+displace_atoms move move 0.09 0.09 0.09 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      89            0            0            0            0        172.8 
+      90            0            0            0            0        172.8 
+Loop time of 0.000247002 on 1 procs for 1 steps with 2 atoms
+
+Performance: 699590.474 tau/day, 4048.556 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.16
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.3379e-06 | 3.3379e-06 | 3.3379e-06 |   0.0 |  1.35
+Output  | 0.00022507 | 0.00022507 | 0.00022507 |   0.0 | 91.12
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.64
+Other   |            | 1.168e-05  |            |       |  4.73
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n90.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 91*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.091 $d $d units box
+displace_atoms move move 0.091 0.091 $d units box
+displace_atoms move move 0.091 0.091 0.091 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      90            0            0            0            0        172.8 
+      91            0            0            0            0        172.8 
+Loop time of 0.000211 on 1 procs for 1 steps with 2 atoms
+
+Performance: 818955.628 tau/day, 4739.327 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.36
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 5.2452e-06 | 5.2452e-06 | 5.2452e-06 |   0.0 |  2.49
+Output  | 0.00018287 | 0.00018287 | 0.00018287 |   0.0 | 86.67
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.81
+Other   |            | 1.621e-05  |            |       |  7.68
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n91.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 92*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.092 $d $d units box
+displace_atoms move move 0.092 0.092 $d units box
+displace_atoms move move 0.092 0.092 0.092 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      91            0            0            0            0        172.8 
+      92            0            0            0            0        172.8 
+Loop time of 0.000202894 on 1 procs for 1 steps with 2 atoms
+
+Performance: 851675.360 tau/day, 4928.677 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.94
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.3379e-06 | 3.3379e-06 | 3.3379e-06 |   0.0 |  1.65
+Output  | 0.00018311 | 0.00018311 | 0.00018311 |   0.0 | 90.25
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  2.00
+Other   |            | 1.049e-05  |            |       |  5.17
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n92.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 93*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.093 $d $d units box
+displace_atoms move move 0.093 0.093 $d units box
+displace_atoms move move 0.093 0.093 0.093 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      92            0            0            0            0        172.8 
+      93            0            0            0            0        172.8 
+Loop time of 0.000189066 on 1 procs for 1 steps with 2 atoms
+
+Performance: 913966.874 tau/day, 5289.160 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.64
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.64
+Output  | 0.00016499 | 0.00016499 | 0.00016499 |   0.0 | 87.26
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  2.14
+Other   |            | 1.383e-05  |            |       |  7.31
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n93.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 94*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.094 $d $d units box
+displace_atoms move move 0.094 0.094 $d units box
+displace_atoms move move 0.094 0.094 0.094 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      93            0            0            0            0        172.8 
+      94            0            0            0            0        172.8 
+Loop time of 0.000206947 on 1 procs for 1 steps with 2 atoms
+
+Performance: 834995.082 tau/day, 4832.147 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.92
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 1.9073e-06 | 1.9073e-06 | 1.9073e-06 |   0.0 |  0.92
+Output  | 0.00018406 | 0.00018406 | 0.00018406 |   0.0 | 88.94
+Modify  | 3.3379e-06 | 3.3379e-06 | 3.3379e-06 |   0.0 |  1.61
+Other   |            | 1.574e-05  |            |       |  7.60
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n94.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 95*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.095 $d $d units box
+displace_atoms move move 0.095 0.095 $d units box
+displace_atoms move move 0.095 0.095 0.095 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      94            0            0            0            0        172.8 
+      95            0            0            0            0        172.8 
+Loop time of 0.000470877 on 1 procs for 1 steps with 2 atoms
+
+Performance: 366975.054 tau/day, 2123.698 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  0.61
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  0.86
+Output  | 0.00044107 | 0.00044107 | 0.00044107 |   0.0 | 93.67
+Modify  | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  0.61
+Other   |            | 2.003e-05  |            |       |  4.25
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n95.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 96*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.096 $d $d units box
+displace_atoms move move 0.096 0.096 $d units box
+displace_atoms move move 0.096 0.096 0.096 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      95            0            0            0            0        172.8 
+      96            0            0            0            0        172.8 
+Loop time of 0.000201941 on 1 procs for 1 steps with 2 atoms
+
+Performance: 855697.439 tau/day, 4951.953 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.42
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 2.861e-06  | 2.861e-06  | 2.861e-06  |   0.0 |  1.42
+Output  | 0.00018191 | 0.00018191 | 0.00018191 |   0.0 | 90.08
+Modify  | 4.2915e-06 | 4.2915e-06 | 4.2915e-06 |   0.0 |  2.13
+Other   |            | 1.001e-05  |            |       |  4.96
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n96.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 97*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.097 $d $d units box
+displace_atoms move move 0.097 0.097 $d units box
+displace_atoms move move 0.097 0.097 0.097 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      96            0            0            0            0        172.8 
+      97            0            0            0            0        172.8 
+Loop time of 0.000307083 on 1 procs for 1 steps with 2 atoms
+
+Performance: 562714.077 tau/day, 3256.447 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.01
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 6.485e-05  | 6.485e-05  | 6.485e-05  |   0.0 | 21.12
+Output  | 0.0002172  | 0.0002172  | 0.0002172  |   0.0 | 70.73
+Modify  | 4.7684e-06 | 4.7684e-06 | 4.7684e-06 |   0.0 |  1.55
+Other   |            | 1.717e-05  |            |       |  5.59
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n97.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 98*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.098 $d $d units box
+displace_atoms move move 0.098 0.098 $d units box
+displace_atoms move move 0.098 0.098 0.098 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      97            0 0.0025617468 0.0025617468 0.00017550235        172.8 
+      98            0 0.0025617468 0.0025617468 0.00017550235        172.8 
+Loop time of 0.000238895 on 1 procs for 1 steps with 2 atoms
+
+Performance: 723329.073 tau/day, 4185.932 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.30
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.60
+Output  | 0.00021696 | 0.00021696 | 0.00021696 |   0.0 | 90.82
+Modify  | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.30
+Other   |            | 1.192e-05  |            |       |  4.99
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n98.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 99*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.099 $d $d units box
+displace_atoms move move 0.099 0.099 $d units box
+displace_atoms move move 0.099 0.099 0.099 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      98            0  0.018591382  0.018591382 0.00038259048        172.8 
+      99            0  0.018591382  0.018591382 0.00038259048        172.8 
+Loop time of 0.000234127 on 1 procs for 1 steps with 2 atoms
+
+Performance: 738060.826 tau/day, 4271.185 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.73
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.73
+Output  | 0.00020909 | 0.00020909 | 0.00020909 |   0.0 | 89.31
+Modify  | 3.8147e-06 | 3.8147e-06 | 3.8147e-06 |   0.0 |  1.63
+Other   |            | 1.311e-05  |            |       |  5.60
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n99.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+variable d equal $n*0.001
+variable d equal 100*0.001
+
+displace_atoms move move $d $d $d units box
+displace_atoms move move 0.1 $d $d units box
+displace_atoms move move 0.1 0.1 $d units box
+displace_atoms move move 0.1 0.1 0.1 units box
+run 1
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Per MPI rank memory allocation (min/avg/max) = 2.689 | 2.689 | 2.689 Mbytes
+Step Temp PotEng TotEng Press Volume 
+      99            0  0.049707932  0.049707932 0.00047660838        172.8 
+     100            0  0.049707932  0.049707932 0.00047660838        172.8 
+Loop time of 0.000217915 on 1 procs for 1 steps with 2 atoms
+
+Performance: 792971.260 tau/day, 4588.954 timesteps/s
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.0994e-06 | 3.0994e-06 | 3.0994e-06 |   0.0 |  1.42
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.86
+Output  | 0.00019288 | 0.00019288 | 0.00019288 |   0.0 | 88.51
+Modify  | 4.0531e-06 | 4.0531e-06 | 4.0531e-06 |   0.0 |  1.86
+Other   |            | 1.383e-05  |            |       |  6.35
+
+Nlocal:    2 ave 2 max 2 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    1 ave 1 max 1 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 1
+Ave neighs/atom = 0.5
+Neighbor list builds = 0
+Dangerous builds = 0
+write_dump all custom dump.n$n.atom id type x y z fx fy fz
+write_dump all custom dump.n100.atom id type x y z fx fy fz
+
+next n
+jump SELF loop
+Total wall time: 0:00:01

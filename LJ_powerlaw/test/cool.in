@@ -1,0 +1,45 @@
+# test simulations with LJ_POWERLAW potential
+
+units            lj 
+boundary         p p p 
+atom_style       atomic 
+
+lattice          bcc 2.50
+region           box block 0 6 0 6 0 6 
+create_box       2 box 
+create_atoms     2 box basis 1 1 basis 2 2
+
+timestep         0.002
+
+#---------interaction-------------------
+mass  * 1.0
+pair_style       lj/powerlaw  1.0
+pair_coeff       1 1 1.0 1.0  2.0  1.0 
+pair_coeff       1 2 1.0 0.95  2.0  0.95
+pair_coeff       2 2 1.0 0.90 2.0  0.90
+#---------interaction-------------------
+
+neighbor         0.5 bin 
+neigh_modify     every 1 delay 0 check yes 
+
+thermo           100
+thermo_style     custom step temp pe etotal press vol 
+
+
+fix 1 all nvt temp 0.1 0.1 0.2
+run 10000
+unfix 1  
+
+reset_timestep 0
+#------------------quench----------
+fix              1 all nvt temp 0.1 0.0001 0.2
+dump             1 all custom 5000 dump.atom id type x y z fx fy fz
+run              100000
+
+write_data       end.data
+
+print "***************successfully********************"
+
+pair_write 1 1 100 r 0.5 1.5 table11.dat LJ
+pair_write 2 2 100 r 0.5 1.5 table22.dat LJ 
+pair_write 1 2 100 r 0.5 1.5 table12.dat LJ 
