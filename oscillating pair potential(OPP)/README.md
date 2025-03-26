@@ -58,6 +58,6 @@ $$
 #### Examples
 
 ```bash
-    pair_style      opp/smooth/linear 5     # cut_global = 5.0
-    pair_coeff      1 1 5.0 0.377           # k=3.0, phi=0.377
+    pair_style      opp/smooth/linear 5      # cut_global = 5.0
+    pair_coeff      1 1 5.0 0.377            # k=3.0, phi=0.377
 ```
