@@ -61,3 +61,13 @@ $$
     pair_style      lj/gp/smooth/linear 2.5     # cut_global = 2.5
     pair_coeff      1 1 2.0 1.5                 # eps=2.0, r0=1.5
 ```
+
+----
+
+#### Accuracy
+
+If I set the cutoff at $r=2.0$, this adjustment will help smooth the discrepancy between the LJGP potential and the cutoff point, ensuring a more continuous transition of the potential function and reducing artificial discontinuities in force calculations.
+
+| ![compare1](compare1.png) | ![compare2](compare2.png) |
+|:-------------------------:|:-------------------------:|
+|Full-range distribution ($0.85 ≤ r ≤ 7.0$)|Cutoff region detail ($r=2.0$)|
