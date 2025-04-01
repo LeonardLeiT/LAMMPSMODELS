@@ -27,7 +27,7 @@ Parameters $k$ and $\phi$ describe the wavenumber and phase shift of a damped os
 #### Examples
 
 ```bash
-    pair_style      opp 5                 # cut_global = 5.0
+    pair_style      opp 6                 # cut_global = 6.0
     pair_coeff      1 1 5.0 0.377         # k=5.0, phi=0.377
 ```
 
@@ -35,7 +35,9 @@ Parameters $k$ and $\phi$ describe the wavenumber and phase shift of a damped os
 
 #### Accuracy
 
-![compare](compare.png)
+| ![compare](compare.png) | ![comparef](compareF.png) |
+|:-------------------------:|:-------------------------:|
+|Potential|Force|
 
 ----
 
@@ -58,7 +60,7 @@ $$
 #### Examples
 
 ```bash
-    pair_style      opp/smooth/linear 5      # cut_global = 5.0
+    pair_style      opp/smooth/linear 6      # cut_global = 6.0
     pair_coeff      1 1 5.0 0.377            # k=5.0, phi=0.377
 ```
 
@@ -68,6 +70,14 @@ $$
 
 If I set the cutoff at $r=6.0$, this adjustment will help smooth the discrepancy between the OPP potential and the cutoff point, ensuring a more continuous transition of the potential function and reducing artificial discontinuities in force calculations.
 
+##### Potential： OPP/Smooth/Linear vs. OPP
+
 | ![compare1](compare1.png) | ![compare2](compare2.png) |
+|:-------------------------:|:-------------------------:|
+|Full-range distribution ($0.85 ≤ r ≤ 7.0$)|Cutoff region detail ($r=6.0$)|
+
+##### Force： OPP/Smooth/Linear vs. OPP
+
+| ![compare1](compareF1.png) | ![compare2](compareF2.png) |
 |:-------------------------:|:-------------------------:|
 |Full-range distribution ($0.85 ≤ r ≤ 7.0$)|Cutoff region detail ($r=6.0$)|

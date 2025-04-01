@@ -27,7 +27,7 @@ where we fixed the width of the Gaussian to $\sigma_G^2=0.02$  (and $\sigma_{LJ}
 #### Examples
 
 ```bash
-    pair_style      lj/gp 2.5               # cut_global = 2.5
+    pair_style      lj/gp 2.0               # cut_global = 2.0
     pair_coeff      1 1 2.0 1.5             # eps=2.0, r0=1.5
 ```
 
@@ -35,7 +35,9 @@ where we fixed the width of the Gaussian to $\sigma_G^2=0.02$  (and $\sigma_{LJ}
 
 #### Accuracy
 
-![compare](compare.png)
+| ![compare](compare.png) | ![comparef](compareF.png) |
+|:-------------------------:|:-------------------------:|
+|Potential|Force|
 
 ----
 
@@ -58,7 +60,7 @@ $$
 #### Examples
 
 ```bash
-    pair_style      lj/gp/smooth/linear 2.5     # cut_global = 2.5
+    pair_style      lj/gp/smooth/linear 2.0     # cut_global = 2.0
     pair_coeff      1 1 2.0 1.5                 # eps=2.0, r0=1.5
 ```
 
@@ -68,6 +70,14 @@ $$
 
 If I set the cutoff at $r=2.0$, this adjustment will help smooth the discrepancy between the LJGP potential and the cutoff point, ensuring a more continuous transition of the potential function and reducing artificial discontinuities in force calculations.
 
+##### Potential： LJGP/Smooth/Linear vs. LJGP
+
 | ![compare1](compare1.png) | ![compare2](compare2.png) |
+|:-------------------------:|:-------------------------:|
+|Full-range distribution ($0.85 ≤ r ≤ 7.0$)|Cutoff region detail ($r=2.0$)|
+
+##### Force： LJGP/Smooth/Linear vs. LJGP
+
+| ![compare1](compareF1.png) | ![compare2](compareF2.png) |
 |:-------------------------:|:-------------------------:|
 |Full-range distribution ($0.85 ≤ r ≤ 7.0$)|Cutoff region detail ($r=2.0$)|
