@@ -20,7 +20,11 @@ $$
 V_{LJGP}(r)=\frac{1}{r^{12}}-\frac{1}{r^6}-\varepsilon \exp(-\frac{(r-r_0)^2}{2\sigma_G^2})
 $$
 
-where we fixed the width of the Gaussian to $\sigma_G^2=0.02$  (and $\sigma_{LJ}$ in the  Lennard-Jones potential is set to $2^{-1/6}$ and $\varepsilon_{LJ}=1$). The two remaining parameters are the position $r_0$ and depth $\varepsilon$ of the Gaussian. Because the potential converges rapidly, we truncated it at $r=2.5$.
+where we fixed the width of the Gaussian to $\sigma_G^2=0.02$  (and $\sigma_{LJ}$ in the  Lennard-Jones potential is set to $2^{-1/6}$ and $\varepsilon_{LJ}=1$). The two remaining parameters are the position $r_0$ and depth $\varepsilon$ of the Gaussian. Because the potential converges rapidly, we truncated it at $r=2.5$. The corresponding force is given by:
+
+$$
+F_{LJGP}(r)=-\frac{dV_{LJGP}(r)}{dr}
+$$
 
 ----
 

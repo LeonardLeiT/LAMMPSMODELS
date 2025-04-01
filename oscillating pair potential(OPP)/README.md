@@ -20,7 +20,11 @@ $$
 V_{OPP}(r)=\frac{1}{r^{15}}+\frac{\cos(k(r-1)+\phi)}{r_3}
 $$
 
-Parameters $k$ and $\phi$ describe the wavenumber and phase shift of a damped oscillation, respectively. The oscillation is truncated and shifted to zero at the local maximum following the second attractive well.
+Parameters $k$ and $\phi$ describe the wavenumber and phase shift of a damped oscillation, respectively. The oscillation is truncated and shifted to zero at the local maximum following the second attractive well. The corresponding force is given by:
+
+$$
+F_{OPP}(r)=-\frac{dV_{OPP}(r)}{dr}
+$$
 
 ----
 
